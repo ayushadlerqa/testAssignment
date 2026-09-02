@@ -1,20 +1,25 @@
-import { $ } from '@wdio/globals'
+import { $, $$ } from '@wdio/globals'
 
 class cartPage {
 
-    get addToCart() { return $('a.shopping_cart_link') }
-    
-    
+    // --- Locators ---
+    get cartLink()  { return $('a.shopping_cart_link'); }
+    get itemsList() { return $$('div.cart_item_label'); }
+
+    // Selector applied *relative to* a single cart item (nested lookup).
+    // Kept here with the other locators so all selectors live in one place.
+    itemNameSelector = 'div.inventory_item_name';
+
     async navigateToCart() {
-        await this.addToCart.click();
+        await this.cartLink.click();
     }
 
     async getCartItems() {
-        const cartItems = await $$('//div[@class="cart_item_label"]');
+        const items = await this.itemsList;
         const itemNames = [];
-        for (const item of cartItems) {
-            const itemName = await item.$('//div[@class="cart_item_label"]/a').getText();
-            itemNames.push(itemName);
+        for (const item of items) {
+            // Read only the product name, not the whole label (desc/price/Remove)
+            itemNames.push(await item.$(this.itemNameSelector).getText());
         }
         return itemNames;
     }

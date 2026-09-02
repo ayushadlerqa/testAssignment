@@ -9,6 +9,11 @@ class checkoutPage {
     get continueBtn() { return $('#continue'); }
     get finishBtn() { return $('#finish'); }
     get confirmationHeader() { return $('.complete-header'); }
+    get summaryLabels() { return $$('.summary_value_label') }
+    get itemName() { return $('.cart_item .inventory_item_name')}
+    get itemTotal() { return $('.summary_subtotal_label') }
+    get taxLabel() { return $('.summary_tax_label') }
+    get totalLabel() { return $('.summary_total_label') }
 
     async checkout() {
         await this.checkOutBtn.click();
@@ -22,14 +27,14 @@ class checkoutPage {
     }
 
     async getOrderSummary() {
-        const valueLabels = await $$('.summary_value_label');
+        const valueLabels = await this.summaryLabels;
         const payment  = await valueLabels[0].getText();   
         const shipping = await valueLabels[1].getText();   
-        const productName = await $('.cart_item .inventory_item_name').getText();
+        const productName = await this.itemName.getText();
 
-        const itemTotalText = await $('.summary_subtotal_label').getText();
-        const taxText       = await $('.summary_tax_label').getText();   
-        const totalText     = await $('.summary_total_label').getText();  
+        const itemTotalText = await this.itemTotal.getText();
+        const taxText       = await this.taxLabel.getText();   
+        const totalText     = await this.totalLabel.getText();  
         const toNumber = (text) => parseFloat(text.replace(/[^0-9.]/g, ''));
 
         return {
